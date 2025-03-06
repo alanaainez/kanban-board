@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 interface JwtPayload {
   username: string;
+  exp?: number,
 }
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
@@ -13,13 +14,11 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   if (!token) {
   return res.sendStatus(401);
   } 
-  
-  jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Invalid or expired token.' });
-    }
-    
-    req.user = user as JwtPayload; // Attach decoded user info to the request
-    next(); // Move to the next middleware/route
-  });
+    try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    req.user = decoded;
+    return next(); // Move to the next middleware
+  } catch (err) {
+    return res.status(403).json({ message: 'Invalid or expired token.' });
+  }
 };
