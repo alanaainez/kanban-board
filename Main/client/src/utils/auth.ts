@@ -25,13 +25,14 @@ class AuthService {
       if (!decoded.exp) return false; // If no `exp`, assume it's valid
       return decoded.exp < Date.now() / 1000;
     } catch (err) {
-      return true; // If decoding fails, assume token is invalid
+      return false; // If decoding fails, assume token is invalid
     }
   }
 
   getToken(): string {
     // TODO: return the token
-    return localStorage.getItem('id_token') || '';
+    const loggedUser = localStorage.getItem('id_token') || '';
+    return loggedUser;
   }
 
   login(idToken: string) {

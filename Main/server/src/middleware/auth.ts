@@ -8,17 +8,22 @@ interface JwtPayload {
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   // TODO: verify the token exists and add the user data to the request object
-  //const authHeader = req.headers['authorization'];  
-  const token = req.headers['authorization']?.split(' ')[1];
+  const authHeader = req.headers['authorization'];  
 
-  if (!token) {
-  return res.sendStatus(401);
-  } 
-    try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-    req.user = decoded;
-    return next(); // Move to the next middleware
-  } catch (err) {
-    return res.status(403).json({ message: 'Invalid or expired token.' });
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+
+    const secretKey = process.env.JWT_SECRET_KEY || '';
+
+    jwt.verify(token, secretKey, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+
+      req.user = user as JwtPayload;
+      return next();
+    });
+  } else {
+    res.sendStatus(401);
   }
 };
