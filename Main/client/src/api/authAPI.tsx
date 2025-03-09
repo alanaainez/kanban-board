@@ -11,11 +11,12 @@ const login = async (userInfo: UserLogin) => {
       body: JSON.stringify(userInfo),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
       throw new Error("Login failed");
     }
 
-    const data = await response.json();
     localStorage.setItem("token", data.token); // Store JWT for authentication
     return data;
   } catch (error) {
