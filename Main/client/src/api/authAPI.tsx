@@ -11,7 +11,13 @@ const login = async (userInfo: UserLogin) => {
       body: JSON.stringify(userInfo),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json(); // Attempt to parse JSON
+    } catch (jsonError) {
+      console.error("Response is not JSON:", jsonError);
+      throw new Error("Unexpected server response");
+    }
 
     if (!response.ok) {
       throw new Error("Login failed");
@@ -23,7 +29,5 @@ const login = async (userInfo: UserLogin) => {
     console.error("Error logging in:", error);
   }
 };
-
-
 
 export { login };
