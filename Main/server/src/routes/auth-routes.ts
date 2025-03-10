@@ -1,7 +1,9 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
 import { User } from '../models/user.js';
+import { loginUser } from "../controllers/user-controller.js";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { Request, Response } from 'express';
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -34,9 +36,9 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-const router = Router();
+const router = express.Router();
 
 // POST /login - Login a user
-router.post('/login', login);
+router.post('/login', loginUser);
 
 export default router;

@@ -11,22 +11,18 @@ const login = async (userInfo: UserLogin) => {
       body: JSON.stringify(userInfo),
     });
 
-    let data;
-    try {
-      data = await response.json(); // Attempt to parse JSON
-    } catch (jsonError) {
-      console.error("Response is not JSON:", jsonError);
-      throw new Error("Unexpected server response");
-    }
+    const data = await response.json();
 
     if (!response.ok) {
-      throw new Error("Login failed");
+      const errorText = await response.text();
+      throw new Error(errorText || "Login failed");
     }
 
     localStorage.setItem("token", data.token); // Store JWT for authentication
     return data;
   } catch (error) {
     console.error("Error logging in:", error);
+    return null;
   }
 };
 

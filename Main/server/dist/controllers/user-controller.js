@@ -1,4 +1,28 @@
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import { User } from '../models/user.js';
+//User Login
+export const loginUser = async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const user = await User.findOne({ where: { username } });
+        if (!user) {
+            return res.status(401).json({ message: "Invalid email or password" });
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid email or password" });
+        }
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+        return res.json({ token, userId: user.id });
+    }
+    catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
 // GET /Users
 export const getAllUsers = async (_req, res) => {
     try {
