@@ -3,7 +3,7 @@ import { UserLogin } from "../interfaces/UserLogin";
 const login = async (userInfo: UserLogin) => {
   // TODO: make a POST request to the login route
   try {
-    const response = await fetch("http://localhost:3001/api/login", {
+    const response = await fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -11,13 +11,12 @@ const login = async (userInfo: UserLogin) => {
       body: JSON.stringify(userInfo),
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
-      const errorText = await response.text();
+      const errorText = await response.json().catch(() => ({ error: "Unknown error" }));
       throw new Error(errorText || "Login failed");
     }
 
+    const data = await response.json();
     localStorage.setItem("token", data.token); // Store JWT for authentication
     return data;
   } catch (error) {

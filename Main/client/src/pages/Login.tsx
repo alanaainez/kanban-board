@@ -20,11 +20,16 @@ const Login = () => {
     e.preventDefault();
     try {
       const data = await login(loginData);
+      if (!data || !data.token) {
+        console.error("Login failed: No token received.");
+        return;
+      }
       Auth.login(data.token);
     } catch (err) {
-      console.error('Failed to login', err);
+      console.error("Failed to login", err);
     }
   };
+
 
   return (
     <div className='container'>
