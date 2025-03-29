@@ -18,7 +18,7 @@ export const loginUser = async (req, res) => {
             return res.status(401).json({ message: "Invalid username or password" });
         }
         console.log("Login successful, generating token...");
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET_KEY, {
             expiresIn: "1h",
         });
         console.log("Token generated for:", username);
